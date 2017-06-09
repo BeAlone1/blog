@@ -1,0 +1,11 @@
+DEBUG = True
+SECRET_KEY = 'sfdqweqwesdfazxfdgwa_fadae_'
+SESSION_COOKIE_NAME = 'jsessionid'
+PERMANENT_SESSION_LIFETIME = 100
+LOGGER_NAME = 'log.txt'
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@127.0.0.1:3306/blog'
+SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_ECHO = False
+
+SESSION_TYPE = 'memcached'
