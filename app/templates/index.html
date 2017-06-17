@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>评估</title>
+    <style>
+        @media(min-width: 1100px){
+            .contain{
+                width: 1100px;
+                margin: 0 auto;
+            }
+        }
+        
+        #user a{text-decoration: none;}
+    </style>
+    
+</head>
+
+<body style="background-color: #f2f2f2;">
+    <nav class="navbar navbar-default" style="background-color: #000; border: 0px; border-radius: 0px;">
+        <div class="contain">
+            <a href="#" class="navbar-brand" style="color: white; font-size: 30px; padding-left: 0px;">Blog</a>
+            <div id="user" class="navbar-right">
+                <a href="#" class="navbar-text" data-toggle="modal" data-target="#login">登录</a>
+                <a href="#" class="navbar-text" data-toggle="modal" data-target="#register">注册</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="modal fade" id="login">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">&times;</button>
+                    <h4>用户登录</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="/login" method="post">
+                        <label>邮箱</label>
+                        <input type="text" class="form-control" id="email" name="email" placeholder="email">
+                        <label style="margin-top: 20px;">密码</label>
+                        <input type="password" class="form-control" id="passwd" name="passwd" placeholder="password">
+                    </form>
+                    <div class="alert alert-warning" style="margin-top: 20px; margin-bottom: -5px; display: none;"  id="alert">
+                        <p>aaaa</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="return loginaction();">登录</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="register">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal">&times;</button>
+                    <h4>用户注册</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" action="/login" method="post">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">名称</label>
+                            <div class="col-md-9">
+                                <input class="form-control" name="name" placeholder="name" type="text">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">邮箱</label>
+                            <div class="col-md-9">
+                                <input class="col-md-8 form-control" name="email" placeholder="email" type="email">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">密码</label>
+                            <div class="col-md-9">
+                                <input class="form-control" name="passwd" placeholder="password" type="password">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="return registeraction();">注册</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="contain">
+        <div class="row">
+            <div class="col-md-10">
+                <h3>最新</h3>
+            </div>
+
+            <div class="col-md-2">
+                <h3>热门</h3>
+        </div>
+    </div>
+
+    <script>
+        function loginaction(){
+            var email = $('#email').val();
+            var passwd = $('#passwd').val();
+            if(email == ""){
+                $('#alert p').text('邮箱为空');
+                $('#alert').css('display', 'block');
+                return false;
+            }
+            else if(passwd == ""){
+                $('#alert p').text('密码为空');
+                $('#alert').css('display', 'block');
+                return false;
+            }
+
+            $.ajax({
+                url: '/login',
+                method: 'post',
+                data: {
+                    email : email,
+                    passwd : passwd 
+                },
+                success: function(data) {
+                    if(data.code == 0){
+                        window.location.reload();
+                    }
+                    else if(data.code == 1){
+                        $('#alert p').text(data.msg);
+                        $('#alert').css('display', 'block');
+                    }
+                }
+            })
+        }
+    </script>
+</body>
+</html>
