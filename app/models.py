@@ -16,7 +16,7 @@ class User(db.Model):
     aboutme = db.Column(db.String(500))
     create_time = db.Column(db.DateTime)
 
-    def __init__(self, g_id, name, email, passwd, create_time):
+    def __init__(self, g_id, name, email, passwd, create_time = None):
         self.g_id = g_id
         self.name = name
         self.email = email

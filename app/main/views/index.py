@@ -4,8 +4,8 @@ from ... import cache
 from ... import db
 from ... import redis_store
 from flask import render_template, session, request, jsonify
-import pickle
-import json
+from ...api import *
+
 @main.route('/')
 def index():
     return render_template('index.html')
@@ -30,5 +30,36 @@ def login():
 
 @main.route('/register', methods=['POST'])
 def register():
-    pass
+    name  = request.form['name']
+    email = request.form['email']
+    passwd = request.form['passwd']
+
+    ret = User.query.filter(db.or_(User.name == name, User.email == email)).all()
+
+    if len(ret) == 2:
+        ret_json = {'code' : 3}
+    elif len(ret) == 0:
+        ret_json = {'code' : 0}
+        new_user = User(1, name, email, passwd)
+        db.session.add(new_user)
+        db.session.commit()
+
+        user = User.query.filter(User.email == email).first()
+        session['user'] = {'u_id' : user.u_id, 'name' : user.name, 'g_id' : user.g_id, 'url' : user.image_url, \
+            'aboutme' : user.aboutme}
+    else:
+        if name == ret[0].name and email == ret[0].email:
+            ret_json = {'code' : 3}
+        elif name == ret[0].name:
+            ret_json = {'code' : 1}
+        elif email == ret[0].email:
+            ret_json = {'code' : 2}
+
+    return jsonify(ret_json)
+
+@main.route('/test')
+def test():
+    b = get_follow(1)
+    return b[0]['follow_id']
+
     

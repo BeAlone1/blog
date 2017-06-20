@@ -17,17 +17,41 @@
         }
         
         #user a{text-decoration: none;}
+
+        .error{
+            color: red;
+            margin-top: 6px;
+            display: none;
+
+        }
     </style>
     
 </head>
 
-<body style="background-color: #f2f2f2;">
-    <nav class="navbar navbar-default" style="background-color: #000; border: 0px; border-radius: 0px;">
+<body>
+    <nav class="navbar navbar-default" style="">
         <div class="contain">
-            <a href="#" class="navbar-brand" style="color: white; font-size: 30px; padding-left: 0px;">Blog</a>
+            <a href="#" class="navbar-brand" style="font-size: 30px; padding-left: 0px;">Blog</a>
             <div id="user" class="navbar-right">
-                <a href="#" class="navbar-text" data-toggle="modal" data-target="#login">登录</a>
-                <a href="#" class="navbar-text" data-toggle="modal" data-target="#register">注册</a>
+
+                {% if session['user'] %}
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" 
+                        aria-expanded="false">{{ session['user']['name'] }}<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">个人中心</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">注销</a></li>
+                    </ul>
+                </li>
+                </ul>
+                
+                {% else %}
+                    <a href="#" class="navbar-text" data-toggle="modal" data-target="#login">登录</a>
+                    <a href="#" class="navbar-text" data-toggle="modal" data-target="#register">注册</a>
+                {% endif %}
+                
             </div>
         </div>
     </nav>
@@ -68,23 +92,35 @@
                     <form class="form-horizontal" action="/login" method="post">
                         <div class="form-group">
                             <label class="col-md-2 control-label">名称</label>
-                            <div class="col-md-9">
-                                <input class="form-control" name="name" placeholder="name" type="text">
+                            <div class="col-md-8">
+                                <input class="form-control" name="name" placeholder="name" id="rname" type="text">
                             </div>
+                            <p class="error" id="errn">名称已注册</p>
                         </div>
+
 
                         <div class="form-group">
                             <label class="col-md-2 control-label">邮箱</label>
-                            <div class="col-md-9">
-                                <input class="col-md-8 form-control" name="email" placeholder="email" type="email">
+                            <div class="col-md-8">
+                                <input class="form-control" name="email" placeholder="email" id="remail" type="email">
                             </div>
+                            <p class="error" id="erre">邮箱已注册</p>
                         </div>
 
                         <div class="form-group">
                             <label class="col-md-2 control-label">密码</label>
-                            <div class="col-md-9">
-                                <input class="form-control" name="passwd" placeholder="password" type="password">
+                            <div class="col-md-8">
+                                <input class="form-control" name="passwd" placeholder="password" id="rpasswd" type="password">
                             </div>
+                            <p class="error" id="errp">两次密码不一样</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label">确认密码</label>
+                            <div class="col-md-8">
+                                <input class="form-control" placeholder="password" id="rpasswd1" type="password">
+                            </div>
+                            <p class="error" id="errp1">两次密码不一样</p>
                         </div>
                     </form>
                 </div>
@@ -99,11 +135,13 @@
 
     <div class="contain">
         <div class="row">
-            <div class="col-md-10">
+            <div class="col-md-9">
                 <h3>最新</h3>
+                <div class="col-md-7">
+                </div>
             </div>
 
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <h3>热门</h3>
         </div>
     </div>
@@ -140,6 +178,90 @@
                     }
                 }
             })
+        }
+
+        function registeraction(){
+            var errn = $('#errn');
+            var erre = $('#erre');
+            var errp = $('#errp');
+            var errp1 = $('#errp1');
+            var rname = $('#rname');
+            var remail = $('#remail');
+            var rpasswd = $('#rpasswd');
+            var rpasswd1 = $('#rpasswd1');
+            var f = 0;
+            errn.css('display', 'none');
+            erre.css('display', 'none');
+            errp.css('display', 'none');
+            errp1.css('display', 'none');
+            
+           if(rname.val()==""){
+                errn.text('必填');
+                errn.css('display', 'block');
+                f = 1;
+            }
+            if(remail.val()==""){
+                erre.text('必填');
+                erre.css('display', 'block');
+                f = 1;
+            }
+            if(rpasswd.val()==""){
+                errp.text('必填');
+                errp.css('display', 'block');
+                f = 1;
+            }
+            if(rpasswd.val().length < 6){
+                errp.text('长度小于6位');
+                errp.css('display', 'block');
+                f = 1;
+            }
+            
+            if(rpasswd1.val()==""){
+                errp1.text('必填');
+                errp1.css('display', 'block');
+                f = 1;
+            }
+            if(rpasswd.val() != rpasswd1.val()){
+                errp1.text('密码不同');
+                errp1.css('display', 'block');
+                f = 1;
+            }
+            
+            if(f == 1){
+                
+                return false;
+            }
+
+            $.ajax({
+                url: '/register',
+                method: 'post',
+                data: {
+                    name: rname.val(),
+                    email: remail.val(),
+                    passwd: rpasswd.val()
+                },
+                success: function(data){
+                    if(data.code == 1){
+                        errn.text('名称已注册');
+                        errn.css('display', 'block');
+                        return false;
+                    }else if(data.code == 2){
+                        erre.text('邮箱已注册');
+                        erre.css('display', 'block');
+                        return false;
+                    }else if(data.code == 3){
+                        errn.text('名称已注册');
+                        errn.css('display', 'block');
+                        erre.text('邮箱已注册');
+                        erre.css('display', 'block');
+                        return false;
+                    }else{
+                        window.location.reload();
+                        return true;
+                    }
+                }
+            })
+            return true;
         }
     </script>
 </body>

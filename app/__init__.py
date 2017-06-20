@@ -18,6 +18,7 @@ def create_app():
     redis_store.init_app(app)
 
     from .main import main
+    from .auth import auth
     app.register_blueprint(main)
-    
+    app.register_blueprint(auth)
     return app
