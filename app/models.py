@@ -44,11 +44,13 @@ class Article(db.Model):
     read_num = db.Column(INTEGER(unsigned = True), default = 0)
     uptime = db.Column(db.DateTime, nullable = False)
 
-    def __init__(self, u_id, title, content, uptime):
+    def __init__(self, u_id, title, content, read_num = 0, uptime = None):
         self.u_id = u_id
         self.title = title
+        self.read_num = read_num
         self.content = content
-        self.uptime = datetime.now()
+        if not uptime:
+            self.uptime = datetime.now()
 
     def __repr__(self):
         return '<Article(%d, %d, %s, %d, %s)>' % (self.arti_id, self.u_id, self.title, \
@@ -96,6 +98,7 @@ class Secret_msg(db.Model):
     from_user = db.Column(INTEGER(unsigned = True), db.ForeignKey('user.u_id'))
     to_user = db.Column(INTEGER(unsigned = True), db.ForeignKey('user.u_id'))
     msg_content = db.Column(db.Text, nullable = False)
+    readed = db.Column(db.Boolean, default = False)
     msg_time = db.Column(db.DateTime, nullable = False)
 
     def __init__(self, from_user, to_user, msg_content, msg_time):

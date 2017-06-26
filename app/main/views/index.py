@@ -23,7 +23,7 @@ def login():
         json_val = {"code" : 1, "msg" : "账户或密码错误"}
     else:
         json_val = {"code" : 0, "msg" : user.name}
-        session['user'] = {'u_id' : user.u_id, 'name' : user.name, 'g_id' : user.g_id, 'url' : user.image_url, \
+        session['user'] = {'u_id' : user.u_id, 'name' : user.name, 'email': user.email,'g_id' : user.g_id, 'url' : user.image_url, \
             'aboutme' : user.aboutme}
 
     return jsonify(json_val)
@@ -57,9 +57,7 @@ def register():
 
     return jsonify(ret_json)
 
-@main.route('/test')
-def test():
-    b = get_follow(1)
-    return b[0]['follow_id']
+
+
 
     
